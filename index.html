@@ -3,9 +3,24 @@
   <head>
     <meta charset="UTF-8">
     <title>todo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="app.min.css">
   </head>
   <body>
-    <ul></ul>
-    <script src="app.js"></script>
+    <div class="pure-menu pure-menu-open pure-menu-horizontal">
+      <a href="#" class="pure-menu-heading">todo</a>
+      <ul id="todos">
+        <li class="pure-menu-selected"><a href="#">Home</a></li>
+        <li><a href="#">Flickr</a></li>
+        <li><a href="#">Messenger</a></li>
+        <li><a href="#">Sports</a></li>
+        <li><a href="#">Finance</a></li>
+      </ul>
+    </div>
+    <ul>
+      <li><input type="checkbox">Task</li>
+    </ul>
+    <script src="lib.min.js"></script>
+    <script src="app.min.js"></script>
   </body>
 </html>
