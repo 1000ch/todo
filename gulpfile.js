@@ -11,8 +11,9 @@ gulp.task('js:app', function () {
 
 gulp.task('js:lib', function () {
   var libs = [
-    'node_modules/jquery/dist/jquery.min.js',
-    'node_modules/flightjs/build/flight.min.js'
+    'bower_components/jquery/dist/jquery.min.js',
+    'bower_components/underscore/underscore-min.js',
+    'bower_components/backbone/backbone.js'
   ];
   return gulp.src(libs)
     .pipe(concat('lib.min.js'))

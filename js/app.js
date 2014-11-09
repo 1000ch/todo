@@ -81,31 +81,60 @@ todo.deleteTask = function (id) {
   request.onerror = todo.database.onerror;
 };
 
-var TaskList = flight.component(function () {
-  this.after('initialize', function () {
+todo.model = {};
+todo.collection = {};
+todo.view = {};
+
+todo.model.TaskItem = Backbone.Model.extend({
+  
+});
+
+todo.collection.TaskList = Backbone.Collection.extend({
+  model: todo.model.TaskItem,
+  initialize: function () {
+
+    var that = this;
 
     console.log('open database');
     todo.database.open(function () {
 
       console.log('get items from database');
-      todo.getTasks(function (value) {
-        console.log(value);
+      todo.getTasks(function (task) {
+        that.add({
+          text: task.text,
+          timestamp: task.timestamp
+        });
       });
     });
-
-    console.log('attach event');
-    this.on('input[type=checkbox]', 'change', function () {
-      console.log('changed');
-    });
-  });
+  }
 });
 
-var TaskItem = flight.component(function () {
-  this.attributes({
-    taskItem: '.task-item'
-  });
+todo.view.TaskListView = Backbone.View.extend({
+  el: '#todos',
+  template: 
+    '<% _.each(models, function (model) { %>' +
+      '<li>' + 
+        '<input type="checkbox"><%= model.text %>' +
+      '</li>' + 
+    '<% }); %>',
+  collection: new todo.collection.TaskList(),
+  events: {
+    'change input[type=checkbox]': 'onChecked'
+  },
+  initialize: function () {
+    this.listenTo(this.collection, 'add sync destroy', this.render);
+  },
+  render: function () {console.log();
+    var html = _.template(this.template, {
+      models: this.collection.toJSON()
+    });
+    this.$el.html(html);
+  },
+  onChecked: function () {
+
+  }
 });
 
 $(function () {
-  TaskList.attachTo('#todos');
+  new todo.view.TaskListView();
 });

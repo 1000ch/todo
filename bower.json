@@ -13,6 +13,9 @@
     "tests"
   ],
   "dependencies": {
-    "pure": "~0.5.0"
+    "pure": "~0.5.0",
+    "backbone": "~1.1.2",
+    "jquery": "~2.1.1",
+    "underscore": "~1.7.0"
   }
 }
