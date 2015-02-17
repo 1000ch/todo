@@ -4,23 +4,40 @@
     <meta charset="UTF-8">
     <title>todo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="app.min.css">
+    <script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
+    <link rel="import" href="todo-item.html">
   </head>
   <body>
-    <div class="pure-menu pure-menu-open pure-menu-horizontal">
-      <a href="#" class="pure-menu-heading">todo</a>
-      <ul id="todos">
-        <li class="pure-menu-selected"><a href="#">Home</a></li>
-        <li><a href="#">Flickr</a></li>
-        <li><a href="#">Messenger</a></li>
-        <li><a href="#">Sports</a></li>
-        <li><a href="#">Finance</a></li>
-      </ul>
-    </div>
-    <ul>
-      <li><input type="checkbox">Task</li>
-    </ul>
-    <script src="lib.min.js"></script>
-    <script src="app.min.js"></script>
+    <template is="auto-binding" id="todo">
+      <template repeat="{{item, i in items}}">
+        <todo-item item="{{item}}" index="{{i}}" on-task-deleted="{{deleteTask}}"></todo-item>
+      </template>
+      <core-icon-button icon="add" on-click="{{addTask}}"></core-icon-button>
+    </template>
+    <script>
+      var todo = document.querySelector('#todo');
+      todo.items = [{
+        done: false,
+        task: 'hoge'
+      }];
+      todo.deleteTask = function (e, detail, sender) {
+        this.items.splice(sender.index, 1);
+      };
+      todo.addTask = function (e, detail, sender) {
+        this.items.push({
+          done: false,
+          task: ''
+        });
+      };
+    </script>
+    <script>
+      if (navigator.serviceWorker) {
+        navigator.serviceWorker.register('serviceworker.js').then(function (registration) {
+          
+        }, function () {
+          
+        });
+      }
+    </script>
   </body>
 </html>
