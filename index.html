@@ -10,7 +10,7 @@
   <body>
     <todo-list></todo-list>
     <script>
-      if (!navigator.serviceWorker) {
+      if (navigator.serviceWorker) {
         navigator.serviceWorker.register('service-worker.js').then(function (registration) {
           console.log('Service Worker was installed.');
         }, function () {
