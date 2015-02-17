@@ -15,6 +15,8 @@ self.addEventListener('install', function (e) {
         'bower_components/webcomponentsjs/webcomponents.min.js',
         'bower_components/polymer/polymer.js'
       ]);
+    }, function (e) {
+      console.log(e);
     })
   );
 });
