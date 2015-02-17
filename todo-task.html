@@ -2,7 +2,6 @@
 <link rel="import" href="bower_components/core-icon-button/core-icon-button.html">
 <link rel="import" href="bower_components/core-icons/core-icons.html">
 <link rel="import" href="bower_components/core-input/core-input.html">
-<link rel="import" href="bower_components/client-uuid/client-uuid.html">
 
 <polymer-element name="todo-task" attributes="item index uuid">
   <template>
@@ -20,6 +19,7 @@
   </template>
   <script>
     Polymer('todo-task', {
+      uuid: '',
       toggle: function (e, detail, sender) {
         this.item.done = !this.item.done;
         this.fire('toggle', {

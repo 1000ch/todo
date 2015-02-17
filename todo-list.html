@@ -1,6 +1,7 @@
 <link rel="import" href="bower_components/core-icon-button/core-icon-button.html">
 <link rel="import" href="bower_components/polymer-idb/polymer-idb.html">
 <link rel="import" href="todo-task.html">
+<link rel="import" href="bower_components/client-uuid/client-uuid.html">
 
 <polymer-element name="todo-list" attributes="items">
   <template>
@@ -17,6 +18,7 @@
                  on-delete="{{delete}}"></todo-task>
     </template>
     <core-icon-button icon="add" on-click="{{add}}"></core-icon-button>
+    <client-uuid id="uuid"></client-uuid>
   </template>
   <script>
     Polymer('todo-list', {
@@ -34,9 +36,11 @@
       },
       add: function () {
 
+        this.$.uuid.reset();
+
         var that = this;
         var item = {
-          uuid: document.createElement('client-uuid').value,
+          uuid: this.$.uuid.value,
           done: false,
           task: ''
         };

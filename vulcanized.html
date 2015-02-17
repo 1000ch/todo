@@ -1582,7 +1582,42 @@ core-icon {
 </script>
 
 </polymer-element>
-
+<polymer-element name="todo-task" attributes="item index uuid" assetpath="">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <div>
+      <core-icon-button icon="{{item.done ? 'check' : 'check-box-outline-blank'}}" on-click="{{toggle}}"></core-icon-button>
+      <input type="text" is="core-input" value="{{item.task}}" on-change="{{change}}">
+      <core-icon-button icon="delete" on-click="{{delete}}"></core-icon-button>
+    </div>
+    <client-uuid value="{{uuid}}"></client-uuid>
+  </template>
+  <script>
+    Polymer('todo-task', {
+      uuid: '',
+      toggle: function (e, detail, sender) {
+        this.item.done = !this.item.done;
+        this.fire('toggle', {
+          uuid: this.uuid
+        });
+      },
+      change: function (e) {
+        this.fire('change', {
+          uuid: this.uuid
+        });
+      },
+      delete: function (e, detail, sender) {
+        this.fire('delete', {
+          uuid: this.uuid
+        });
+      }
+    });
+  </script>
+</polymer-element>
 <polymer-element name="client-uuid" hidden="" attributes="name value" assetpath="bower_components/client-uuid/">
   <script>
   (function() {
@@ -1682,47 +1717,14 @@ core-icon {
   </script>
 
 </polymer-element>
-<polymer-element name="todo-task" attributes="item index uuid" assetpath="">
-  <template>
-    <style>
-      :host {
-        display: block;
-      }
-    </style>
-    <div>
-      <core-icon-button icon="{{item.done ? 'check' : 'check-box-outline-blank'}}" on-click="{{toggle}}"></core-icon-button>
-      <input type="text" is="core-input" value="{{item.task}}" on-change="{{change}}">
-      <core-icon-button icon="delete" on-click="{{delete}}"></core-icon-button>
-    </div>
-    <client-uuid value="{{uuid}}"></client-uuid>
-  </template>
-  <script>
-    Polymer('todo-task', {
-      toggle: function (e, detail, sender) {
-        this.item.done = !this.item.done;
-        this.fire('toggle', {
-          uuid: this.uuid
-        });
-      },
-      change: function (e) {
-        this.fire('change', {
-          uuid: this.uuid
-        });
-      },
-      delete: function (e, detail, sender) {
-        this.fire('delete', {
-          uuid: this.uuid
-        });
-      }
-    });
-  </script>
-</polymer-element></div><polymer-element name="todo-list" attributes="items" assetpath="">
+</div><polymer-element name="todo-list" attributes="items" assetpath="">
   <template>
     <polymer-idb id="idb" database="todo" version="1" object-store="task" key-path="uuid" on-idb-ready="idbReady"></polymer-idb>
     <template repeat="{{item, index in items}}">
       <todo-task item="{{item}}" index="{{index}}" on-toggle="{{update}}" on-change="{{update}}" on-delete="{{delete}}"></todo-task>
     </template>
     <core-icon-button icon="add" on-click="{{add}}"></core-icon-button>
+    <client-uuid id="uuid"></client-uuid>
   </template>
   <script>
     Polymer('todo-list', {
@@ -1740,9 +1742,11 @@ core-icon {
       },
       add: function () {
 
+        this.$.uuid.reset();
+
         var that = this;
         var item = {
-          uuid: document.createElement('client-uuid').value,
+          uuid: this.$.uuid.value,
           done: false,
           task: ''
         };
