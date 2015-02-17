@@ -12,7 +12,9 @@
                  key-path="uuid"
                  on-idb-ready="idbReady"></polymer-idb>
     <template repeat="{{item, index in items}}">
-      <todo-task item="{{item}}" index="{{index}}" uuid="{{item.uuid}}"
+      <todo-task item="{{item}}"
+                 index="{{index}}"
+                 uuid="{{item.uuid}}"
                  on-toggle="{{update}}"
                  on-change="{{update}}"
                  on-delete="{{delete}}"></todo-task>
