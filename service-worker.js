@@ -9,8 +9,6 @@ self.addEventListener('install', function (e) {
 
       return cache.addAll([
         'index.html',
-        'todo-list.html',
-        'todo-task.html',
         'vulcanized.html',
         'bower_components/cache-polyfill/dist/serviceworker-cache-polyfill.js',
         'bower_components/rsvp/rsvp.min.js',
