@@ -12,8 +12,8 @@
                  on-idb-ready="idbReady"></polymer-idb>
     <template repeat="{{item, index in items}}">
       <todo-task item="{{item}}" index="{{index}}"
-                 on-done="{{done}}"
-                 on-undone="{{undone}}"
+                 on-toggle="{{update}}"
+                 on-change="{{update}}"
                  on-delete="{{delete}}"></todo-task>
     </template>
     <core-icon-button icon="add" on-click="{{add}}"></core-icon-button>
@@ -45,21 +45,11 @@
           console.log(error);
         });
       },
-      done: function (e, detail, sender) {
+      update: function (e, detail, sender) {
         
         var that = this;
 
         this.$.idb.delete(sender.index).then(function () {
-          that.items[sender.index].done = true;
-          that.$.idb.put(that.items[sender.index])
-        });
-      },
-      undone: function (e, detail, sender) {
-
-        var that = this;
-
-        this.$.idb.delete(sender.index).then(function () {
-          that.items[sender.index].done = false;
           that.$.idb.put(that.items[sender.index])
         });
       },
