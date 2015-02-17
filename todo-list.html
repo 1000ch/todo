@@ -12,7 +12,7 @@
                  key-path="uuid"
                  on-idb-ready="idbReady"></polymer-idb>
     <template repeat="{{item, index in items}}">
-      <todo-task item="{{item}}" index="{{index}}"
+      <todo-task item="{{item}}" index="{{index}}" uuid="{{item.uuid}}"
                  on-toggle="{{update}}"
                  on-change="{{update}}"
                  on-delete="{{delete}}"></todo-task>
@@ -54,9 +54,10 @@
       update: function (e, detail, sender) {
         
         var that = this;
+        var item = this.items[sender.index];
 
         this.$.idb.delete(detail.uuid).then(function () {
-          that.$.idb.put(that.items[sender.index])
+          that.$.idb.put(item)
         });
       },
       delete: function (e, detail, sender) {
