@@ -8,7 +8,7 @@
                  database="todo"
                  version="1"
                  object-store="task"
-                 key-path="index"
+                 key-path="uuid"
                  on-idb-ready="idbReady"></polymer-idb>
     <template repeat="{{item, index in items}}">
       <todo-task item="{{item}}" index="{{index}}"
@@ -22,6 +22,8 @@
     Polymer('todo-list', {
       items: [],
       ready: function () {
+        
+        //this.$.idb.deleteDatabase();
 
         var that = this;
         this.$.idb.addEventListener('idb-ready', function () {
@@ -34,7 +36,7 @@
 
         var that = this;
         var item = {
-          index: this.items.length,
+          uuid: document.createElement('client-uuid').value,
           done: false,
           task: ''
         };
@@ -49,7 +51,7 @@
         
         var that = this;
 
-        this.$.idb.delete(sender.index).then(function () {
+        this.$.idb.delete(detail.uuid).then(function () {
           that.$.idb.put(that.items[sender.index])
         });
       },
@@ -57,7 +59,7 @@
 
         var that = this;
 
-        this.$.idb.delete(sender.index).then(function () {
+        this.$.idb.delete(detail.uuid).then(function () {
           that.items.splice(sender.index, 1);
         });
       }

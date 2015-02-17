@@ -5,12 +5,12 @@
     <title>todo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="bower_components/webcomponentsjs/webcomponents.min.js"></script>
-    <link rel="import" href="vulcanized.html">
+    <link rel="import" href="todo-list.html">
   </head>
   <body>
     <todo-list></todo-list>
     <script>
-      if (navigator.serviceWorker) {
+      if (!navigator.serviceWorker) {
         navigator.serviceWorker.register('service-worker.js').then(function (registration) {
           console.log('Service Worker was installed.');
         }, function () {
