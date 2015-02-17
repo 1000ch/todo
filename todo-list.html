@@ -1,0 +1,76 @@
+<link rel="import" href="bower_components/core-icon-button/core-icon-button.html">
+<link rel="import" href="bower_components/polymer-idb/polymer-idb.html">
+<link rel="import" href="todo-task.html">
+
+<polymer-element name="todo-list" attributes="items">
+  <template>
+    <polymer-idb id="idb"
+                 database="todo"
+                 version="1"
+                 object-store="task"
+                 key-path="index"
+                 on-idb-ready="idbReady"></polymer-idb>
+    <template repeat="{{item, index in items}}">
+      <todo-task item="{{item}}" index="{{index}}"
+                 on-done="{{done}}"
+                 on-undone="{{undone}}"
+                 on-delete="{{delete}}"></todo-task>
+    </template>
+    <core-icon-button icon="add" on-click="{{add}}"></core-icon-button>
+  </template>
+  <script>
+    Polymer('todo-list', {
+      items: [],
+      ready: function () {
+
+        var that = this;
+        this.$.idb.addEventListener('idb-ready', function () {
+          this.getAll().then(function (items) {
+            that.items = items;
+          });
+        });
+      },
+      add: function () {
+
+        var that = this;
+        var item = {
+          index: this.items.length,
+          done: false,
+          task: ''
+        };
+
+        this.$.idb.put(item).then(function () {
+          that.items.push(item);
+        }, function (error) {
+          console.log(error);
+        });
+      },
+      done: function (e, detail, sender) {
+        
+        var that = this;
+
+        this.$.idb.delete(sender.index).then(function () {
+          that.items[sender.index].done = true;
+          that.$.idb.put(that.items[sender.index])
+        });
+      },
+      undone: function (e, detail, sender) {
+
+        var that = this;
+
+        this.$.idb.delete(sender.index).then(function () {
+          that.items[sender.index].done = false;
+          that.$.idb.put(that.items[sender.index])
+        });
+      },
+      delete: function (e, detail, sender) {
+
+        var that = this;
+
+        this.$.idb.delete(sender.index).then(function () {
+          that.items.splice(sender.index, 1);
+        });
+      }
+    });
+  </script>
+</polymer-element>
