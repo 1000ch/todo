@@ -336,6 +336,8 @@ html /deep/ core-icon {
 
 
 
+
+
 </head><body><div hidden=""><polymer-element name="core-meta" attributes="label type" hidden="" assetpath="bower_components/core-meta/">
 <script>
 
@@ -1580,6 +1582,106 @@ core-icon {
 </script>
 
 </polymer-element>
+
+<polymer-element name="client-uuid" hidden="" attributes="name value" assetpath="bower_components/client-uuid/">
+  <script>
+  (function() {
+    'use strict';
+
+    var rand16 = function() {
+      /*jslint bitwise: true*/
+      return Math.random() * 0x10000 | 0;
+    };
+
+    var pad = function(num, len) {
+      var hex = num.toString(16);
+      if (hex.length < len) {
+        return '000000000000'.substr(0, len-hex.length) + hex;
+      }
+      return hex;
+    };
+
+    var uuid4 = function() {
+      /*jslint bitwise: true*/
+      var seed;
+      if (window.crypto && window.crypto.getRandomValues) {
+        seed = new Uint16Array(8);
+        window.crypto.getRandomValues(seed);
+      } else {
+        seed = [rand16(), rand16(), rand16(), rand16(),
+                rand16(), rand16(), rand16(), rand16()];
+      }
+      return pad(seed[0] * Math.pow(2, 16) +
+                 seed[1], 8) +
+        '-' +
+        pad(seed[2], 4) +
+        '-4' +
+        pad(seed[3] & 0x0fff, 3) +
+        '-' +
+        (seed[4] >> 12 & 3 | 8).toString(16) +
+        pad(seed[4] & 0x0fff, 3) +
+        '-' +
+        pad(seed[5] * Math.pow(2, 32) +
+            seed[6] * Math.pow(2, 16) +
+            seed[7], 12);
+    };
+
+    Polymer('client-uuid',{
+      /**
+       * The name to store the UUID inside of localStorage.
+       *
+       * @attribute name
+       * @type string
+       * @default 'client-uuid'
+       */
+      name: 'client-uuid',
+
+      /**
+       * The generated UUID (version 4).
+       *
+       * @attribute value
+       * @type string
+       */
+      value: null,
+
+      observe: {
+        name: 'load',
+        value: 'save'
+      },
+
+      ready: function() {
+        this.load();
+      },
+
+      load: function() {
+        if (!this.name) {
+          throw new Error('name is required');
+        }
+        this.value = localStorage.getItem(this.name);
+        if (!this.value) {
+          this.reset();
+        }
+      },
+
+      /**
+       * The `reset` method will create a new uuid.
+       *
+       * @method reset
+       */
+      reset: function() {
+        this.value = uuid4();
+      },
+
+      save: function() {
+        if (this.value) {
+          localStorage.setItem(this.name, this.value);
+        }
+      }
+    });
+  })();
+  </script>
+
+</polymer-element>
 <polymer-element name="todo-task" attributes="item index uuid" assetpath="">
   <template>
     <style>
@@ -1592,24 +1694,31 @@ core-icon {
       <input type="text" is="core-input" value="{{item.task}}" on-change="{{change}}">
       <core-icon-button icon="delete" on-click="{{delete}}"></core-icon-button>
     </div>
+    <client-uuid value="{{uuid}}"></client-uuid>
   </template>
   <script>
     Polymer('todo-task', {
       toggle: function (e, detail, sender) {
         this.item.done = !this.item.done;
-        this.fire('toggle');
+        this.fire('toggle', {
+          uuid: this.uuid
+        });
       },
       change: function (e) {
-        this.fire('change');
+        this.fire('change', {
+          uuid: this.uuid
+        });
       },
       delete: function (e, detail, sender) {
-        this.fire('delete');
+        this.fire('delete', {
+          uuid: this.uuid
+        });
       }
     });
   </script>
 </polymer-element></div><polymer-element name="todo-list" attributes="items" assetpath="">
   <template>
-    <polymer-idb id="idb" database="todo" version="1" object-store="task" key-path="index" on-idb-ready="idbReady"></polymer-idb>
+    <polymer-idb id="idb" database="todo" version="1" object-store="task" key-path="uuid" on-idb-ready="idbReady"></polymer-idb>
     <template repeat="{{item, index in items}}">
       <todo-task item="{{item}}" index="{{index}}" on-toggle="{{update}}" on-change="{{update}}" on-delete="{{delete}}"></todo-task>
     </template>
@@ -1619,6 +1728,8 @@ core-icon {
     Polymer('todo-list', {
       items: [],
       ready: function () {
+        
+        //this.$.idb.deleteDatabase();
 
         var that = this;
         this.$.idb.addEventListener('idb-ready', function () {
@@ -1631,7 +1742,7 @@ core-icon {
 
         var that = this;
         var item = {
-          index: this.items.length,
+          uuid: document.createElement('client-uuid').value,
           done: false,
           task: ''
         };
@@ -1646,7 +1757,7 @@ core-icon {
         
         var that = this;
 
-        this.$.idb.delete(sender.index).then(function () {
+        this.$.idb.delete(detail.uuid).then(function () {
           that.$.idb.put(that.items[sender.index])
         });
       },
@@ -1654,7 +1765,7 @@ core-icon {
 
         var that = this;
 
-        this.$.idb.delete(sender.index).then(function () {
+        this.$.idb.delete(detail.uuid).then(function () {
           that.items.splice(sender.index, 1);
         });
       }
