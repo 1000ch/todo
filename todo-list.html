@@ -67,6 +67,20 @@
         this.$.idb.delete(detail.uuid).then(function () {
           that.items.splice(sender.index, 1);
         });
+      },
+      clear: function (e, detail, sender) {
+        
+        var that = this;
+        
+        this.$.idb.deleteAll().then(function () {
+          that.items.length = 0;
+        });
+      },
+      deleteObjectStore: function (e, detail, sender) {
+        this.$.idb.deleteObjectStore();
+      },
+      deleteDatabase: function (e, detail, sender) {
+        this.$.idb.deleteDatabase();
       }
     });
   </script>
