@@ -16,6 +16,7 @@
     "polymer": "~0.5.4",
     "core-icon-button": "Polymer/core-icon-button#~0.5.4",
     "core-input": "Polymer/core-input#~0.5.4",
-    "polymer-idb": "agektmr/polymer-idb#~0.1.2"
+    "polymer-idb": "agektmr/polymer-idb#~0.1.2",
+    "cache-polyfill": "coonsta/cache-polyfill"
   }
 }
