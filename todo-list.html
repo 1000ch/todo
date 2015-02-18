@@ -1,7 +1,8 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
 <link rel="import" href="bower_components/core-icon-button/core-icon-button.html">
 <link rel="import" href="bower_components/polymer-idb/polymer-idb.html">
-<link rel="import" href="todo-task.html">
 <link rel="import" href="bower_components/client-uuid/client-uuid.html">
+<link rel="import" href="todo-task.html">
 
 <polymer-element name="todo-list" attributes="items">
   <template>
@@ -26,10 +27,9 @@
     Polymer('todo-list', {
       items: [],
       ready: function () {
-        
-        //this.$.idb.deleteDatabase();
 
         var that = this;
+
         this.$.idb.addEventListener('idb-ready', function () {
           this.getAll().then(function (items) {
             that.items = items;
@@ -78,9 +78,11 @@
           that.items.length = 0;
         });
       },
+      // debug
       deleteObjectStore: function (e, detail, sender) {
         this.$.idb.deleteObjectStore();
       },
+      // debug
       deleteDatabase: function (e, detail, sender) {
         this.$.idb.deleteDatabase();
       }
