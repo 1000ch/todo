@@ -50,7 +50,7 @@ self.addEventListener('fetch', function (e) {
           return response;
         } else {
           console.log('cache was not found', e.request);
-          
+
           fetch(e.request.clone()).then(function (response) {
             cache.put(e.request, response.clone());
             return response;
