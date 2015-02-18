@@ -15,8 +15,8 @@
           scope: '/'
         }).then(function (registration) {
           console.log('Service Worker was installed.', registration);
-        }, function () {
-          console.log('Service Worker was not installed.');
+        }, function (e) {
+          console.log('Service Worker was not installed.', e);
         });
       }
     </script>
