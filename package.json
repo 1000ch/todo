@@ -2,11 +2,11 @@
   "name": "todo",
   "version": "1.0.0",
   "scripts": {
-    "build": "vulcanize todo-list.html"
+    "build": "vulcanize todo-list.html > vulcanized.html"
   },
   "author": "1000ch",
   "license": "MIT",
   "devDependencies": {
-    "vulcanize": "^0.7.9"
+    "vulcanize": "^1.13.1"
   }
 }

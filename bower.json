@@ -12,11 +12,10 @@
     "tests"
   ],
   "dependencies": {
-    "polymer": "~0.5.4",
-    "core-icon-button": "Polymer/core-icon-button#~0.5.4",
-    "core-input": "Polymer/core-input#~0.5.4",
-    "polymer-idb": "agektmr/polymer-idb#~0.1.2",
-    "cache-polyfill": "coonsta/cache-polyfill",
-    "client-uuid": "pope/client-uuid#~0.1.0"
+    "idb-node": "agektmr/idb-node#~0.5.1",
+    "polymer": "Polymer/polymer#~1.1.5",
+    "paper-icon-button": "PolymerElements/paper-icon-button#~1.0.5",
+    "paper-input": "PolymerElements/paper-input#~1.0.15",
+    "node-uuid": "broofa/node-uuid#~1.4.3"
   }
 }

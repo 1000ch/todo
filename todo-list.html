@@ -1,91 +1,76 @@
 <link rel="import" href="bower_components/polymer/polymer.html">
-<link rel="import" href="bower_components/core-icon-button/core-icon-button.html">
-<link rel="import" href="bower_components/polymer-idb/polymer-idb.html">
-<link rel="import" href="bower_components/client-uuid/client-uuid.html">
+<link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="bower_components/idb-node/idb-node.html">
+<link rel="import" href="bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="todo-task.html">
 
-<polymer-element name="todo-list" attributes="items">
+<script src="bower_components/node-uuid/uuid.js"></script>
+
+<dom-module id="todo-list" attributes="items">
   <template>
-    <polymer-idb id="idb"
-                 database="todo"
-                 version="1"
-                 object-store="task"
-                 key-path="uuid"
-                 on-idb-ready="idbReady"></polymer-idb>
-    <template repeat="{{item, index in items}}">
-      <todo-task item="{{item}}"
+    <idb-node id="idb"
+              database-name="todo"
+              version="1"
+              object-store="task"
+              key-path="uuid"></idb-node>
+    <template is="dom-repeat" id="items" items="{{items}}">
+      <todo-task status="{{item.status}}"
+                 task="{{item.task}}"
                  index="{{index}}"
                  uuid="{{item.uuid}}"
-                 on-toggle="{{update}}"
-                 on-change="{{update}}"
-                 on-delete="{{delete}}"></todo-task>
+                 on-task-toggled="update"
+                 on-task-changed="update"
+                 on-task-deleted="delete"></todo-task>
     </template>
-    <core-icon-button icon="add" on-click="{{add}}"></core-icon-button>
-    <client-uuid id="uuid"></client-uuid>
+    <paper-icon-button icon="add" on-click="add"></paper-icon-button>
   </template>
   <script>
-    Polymer('todo-list', {
-      items: [],
+    Polymer({
+      is: 'todo-list',
+      properties: {
+        items: {
+          type: Array,
+          value: []
+        }
+      },
       ready: function () {
-
         var that = this;
-
         this.$.idb.addEventListener('idb-ready', function () {
-          this.getAll().then(function (items) {
-            that.items = items;
-          });
+          this.getAll()
+            .then(items => that.items = items)
+            .catch(error => console.log(error));
         });
       },
       add: function () {
-
-        this.$.uuid.reset();
-
-        var that = this;
         var item = {
-          uuid: this.$.uuid.value,
-          done: false,
+          uuid: uuid.v1(),
+          status: false,
           task: ''
         };
-
-        this.$.idb.put(item).then(function () {
-          that.items.push(item);
-        }, function (error) {
-          console.log(error);
-        });
+        this.$.idb.put(item)
+          .then(() => this.items.push(item))
+          .then(() => this.$.items.render())
+          .catch(error => console.log(error));
       },
-      update: function (e, detail, sender) {
-        
-        var that = this;
-        var item = this.items[sender.index];
-
-        this.$.idb.delete(detail.uuid).then(function () {
-          that.$.idb.put(item)
-        });
+      update: function (e) {
+        var item = this.items[e.target.index];
+        item.status = e.detail.status;
+        item.task = e.detail.task;
+        this.$.idb.delete(e.target.uuid)
+          .then(() => this.$.idb.put(item))
+          .catch(error => console.log(error));
       },
-      delete: function (e, detail, sender) {
-
-        var that = this;
-
-        this.$.idb.delete(detail.uuid).then(function () {
-          that.items.splice(sender.index, 1);
-        });
+      delete: function (e) {
+        this.$.idb.delete(e.target.uuid)
+          .then(() => this.items.splice(e.target.index, 1))
+          .then(() => this.$.items.render())
+          .catch(error => console.log(error));
       },
-      clear: function (e, detail, sender) {
-        
-        var that = this;
-        
-        this.$.idb.deleteAll().then(function () {
-          that.items.length = 0;
-        });
-      },
-      // debug
-      deleteObjectStore: function (e, detail, sender) {
-        this.$.idb.deleteObjectStore();
-      },
-      // debug
-      deleteDatabase: function (e, detail, sender) {
-        this.$.idb.deleteDatabase();
+      clear: function (e) {
+        this.$.idb.deleteAll()
+          .then(() => this.items.length = 0)
+          .catch(error => console.log(error));
       }
     });
   </script>
-</polymer-element>
+</dom-module>

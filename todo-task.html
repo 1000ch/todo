@@ -1,39 +1,63 @@
 <link rel="import" href="bower_components/polymer/polymer.html">
-<link rel="import" href="bower_components/core-icon-button/core-icon-button.html">
-<link rel="import" href="bower_components/core-input/core-input.html">
+<link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="bower_components/paper-input/paper-input.html">
 
-<polymer-element name="todo-task" attributes="item index uuid">
+<dom-module id="todo-task">
   <template>
     <style>
       :host {
         display: block;
       }
+      paper-input {
+        display: inline-block;
+        width: 240px;
+      }
     </style>
     <div>
-      <core-icon-button icon="{{item.done ? 'check' : 'check-box-outline-blank'}}" on-click="{{toggle}}"></core-icon-button>
-      <input type="text" is="core-input" value="{{item.task}}" on-change="{{change}}">
-      <core-icon-button icon="delete" on-click="{{delete}}"></core-icon-button>
+      <paper-icon-button id="statusIcon" on-click="toggle"></paper-icon-button>
+      <paper-input value="{{task}}" on-change="change"></paper-input>
+      <paper-icon-button icon="delete" on-click="delete"></paper-icon-button>
     </div>
   </template>
   <script>
-    Polymer('todo-task', {
-      uuid: '',
+    Polymer({
+      is: 'todo-task',
+      properties: {
+        status: {
+          type: Boolean,
+          observer: 'onStatusChanged'
+        },
+        task: {
+          type: String,
+          value: ''
+        },
+        index: Number,
+        uuid: String
+      },
+      ready: function() {
+        this.$.statusIcon.icon = this.status ? 'check' : 'check-box-outline-blank';
+      },
+      onStatusChanged: function() {
+        this.$.statusIcon.icon = this.status ? 'check' : 'check-box-outline-blank';
+      },
       toggle: function (e) {
-        this.item.done = !this.item.done;
-        this.fire('toggle', {
-          uuid: this.uuid
+        this.status = !this.status;
+        this.fire('task-toggled', {
+          uuid: this.uuid,
+          status: this.status
         });
       },
       change: function (e) {
-        this.fire('change', {
-          uuid: this.uuid
+        this.fire('task-changed', {
+          uuid: this.uuid,
+          task: this.task
         });
       },
       delete: function (e) {
-        this.fire('delete', {
+        this.fire('task-deleted', {
           uuid: this.uuid
         });
       }
     });
   </script>
-</polymer-element>
+</dom-module>
