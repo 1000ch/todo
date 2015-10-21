@@ -12683,12 +12683,14 @@ style this element.
         this.status = !this.status;
         this.fire('task-toggled', {
           uuid: this.uuid,
-          status: this.status
+          status: this.status,
+          task: this.task
         });
       },
       change: function (e) {
         this.fire('task-changed', {
           uuid: this.uuid,
+          status: this.status,
           task: this.task
         });
       },
